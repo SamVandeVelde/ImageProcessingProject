@@ -12,7 +12,7 @@ def aron_main():
     
     base   = './data/Lights/darktable_exported/Lights'
     #base   = './data/Darks/darktable_exported/Darks'
-    length = 1
+    length = 36
     paths  = [f'{base}{i}.jpg' for i in range(1,length+1)]
     
     rgb_vec = []
@@ -21,7 +21,7 @@ def aron_main():
         rgb    =  imageio.imread(path)
         rgb_vec.append(rgb)
 
-    #rgb = combination_alogs(rgb_vec, ALGO.NO_REJECTION)
+    rgb = combination_alogs(rgb_vec, ALGO.NO_REJECTION)
 
     img    = Image.fromarray(rgb)
     img.show()

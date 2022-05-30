@@ -97,8 +97,8 @@ def combination_alogs(rgb_vec, algo):
     match algo:
         case ALGO.NO_REJECTION:
             # aron
-            x_len = len(rgb_vec[0])//8
-            y_len = len(rgb_vec[0][0])//8
+            x_len = len(rgb_vec[0])//1
+            y_len = len(rgb_vec[0][0])//1
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
             N = 16
@@ -108,7 +108,7 @@ def combination_alogs(rgb_vec, algo):
                 arg = (rgb_vec, x_len//N*i, x_len//N*(i+1), y_len)
                 results.append(p.apply_async(avg, arg))
 
-            ret = np.concatenate([res.get(timeout=100) for res in results])
+            ret = np.concatenate([res.get(timeout=1000) for res in results])
             ret = noise_equal(ret)
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
