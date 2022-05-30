@@ -2,9 +2,9 @@ from enum import Enum
 import multiprocessing as mp
 from multiprocessing import Pool
 import math
-
 import numpy as np
 
+from noise_equalizing import *
 
 class ALGO(Enum):
     NO_REJECTION = 1,
@@ -72,6 +72,27 @@ def min_max(rgb_vec, start_x, stop_x, y_len):
             ret[x-start_x,y,:] = avg
     return ret
 
+def median_var(x):
+    return np.mean(x - x.median())
+
+def sig_clipping(rgb_vec, start_x, stop_x, y_len):
+    x_len = stop_x - start_x
+    i_len = len(rgb_vec)
+    ret = np.zeros([x_len, y_len,3], dtype=np.uint8)
+    for x in range(start_x, stop_x):
+        if start_x == 0:
+            print(f'x: {x}/{stop_x}')
+        for y in range(y_len):
+            values = np.zeros([i_len, 3])
+            for index in range(i_len):
+                values[index,:] = rgb_vec[index][x][y]
+            
+            mask = np.logical_or(values >= max_keep, values <= min_keep)
+            values_masked = np.ma.masked_array(values, mask=mask)
+            avg = np.mean(values_masked, axis=0)
+            ret[x-start_x,y,:] = avg
+    return ret
+
 def combination_alogs(rgb_vec, algo):
     match algo:
         case ALGO.NO_REJECTION:
@@ -88,7 +109,7 @@ def combination_alogs(rgb_vec, algo):
                 results.append(p.apply_async(avg, arg))
 
             ret = np.concatenate([res.get(timeout=100) for res in results])
-            ret = rescale_to_uint8(ret);
+            ret = noise_equal(ret)
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
         case ALGO.MEDIAN:
