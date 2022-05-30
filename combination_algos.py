@@ -1,6 +1,7 @@
-from enum import enum
+from enum import Enum
+import math
 
-class ALGO(enum):
+class ALGO(Enum):
     NO_REJECTION,
     MEDIAN,
     MINMAX,
@@ -9,21 +10,21 @@ class ALGO(enum):
     NO_WEIGHTING_NO_REJECT,
     TURKEYS_BIWEIGHT
 
-def combination_alogs(rgb, algo):
+def combination_alogs(rgb_vec, algo):
     match algos:
-        case NO_REJECTION,:
-            pass
-        case MEDIAN:
-            pass
-        case MINMAX:
-            pass
-        case SIGMA_CLIPPING:
-            pass
-        case AVG_SIGMA_CLIPPING:
-            pass
-        case NO_WEIGHTING_NO_REJECT:
-            pass
-        case TURKEYS_BIWEIGHT:
-            pass
+        case ALGO.NO_REJECTION,:
+            return []
+        case ALGO.MEDIAN:
+            return None
+        case ALGO.MINMAX:
+            return None
+        case ALGO.SIGMA_CLIPPING:
+            return None
+        case ALGO.AVG_SIGMA_CLIPPING:
+            return None
+        case ALGO.NO_WEIGHTING_NO_REJECT:
+            return None
+        case ALGO.TURKEYS_BIWEIGHT:
+            return None
         case _
             assert False
