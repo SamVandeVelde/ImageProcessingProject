@@ -73,7 +73,9 @@ def min_max(rgb_vec, start_x, stop_x, y_len):
     return ret
 
 def median_var(x):
-    return np.mean(x - x.median())
+    med = np.median(x)
+    return [np.mean((x - med)**2), med]
+    #return [np.var(x), med]
 
 def sig_clipping(rgb_vec, start_x, stop_x, y_len):
     x_len = stop_x - start_x
@@ -87,6 +89,39 @@ def sig_clipping(rgb_vec, start_x, stop_x, y_len):
             for index in range(i_len):
                 values[index,:] = rgb_vec[index][x][y]
             
+            alpha = 5 #WHERE DO I COME FROM
+                      # WERE DO I GO?
+                      # COTTON EYE JOE??!!
+            
+            sigma, med = median_var(values)
+            max_keep = med + alpha*sigma
+            min_keep = med - alpha*sigma
+            mask = np.logical_or(values >= max_keep, values <= min_keep)
+            values_masked = np.ma.masked_array(values, mask=mask)
+            avg = np.mean(values_masked, axis=0)
+            ret[x-start_x,y,:] = avg
+    return ret
+
+def avg_sig_clipping(rgb_vec, start_x, stop_x, y_len):
+    x_len = stop_x - start_x
+    i_len = len(rgb_vec)
+    ret = np.zeros([x_len, y_len,3], dtype=np.uint8)
+    for x in range(start_x, stop_x):
+        if start_x == 0:
+            print(f'x: {x}/{stop_x}')
+        for y in range(y_len):
+            values = np.zeros([i_len, 3])
+            for index in range(i_len):
+                values[index,:] = rgb_vec[index][x][y]
+            
+            alpha = 5 #WHERE DO I COME FROM
+                      # WERE DO I GO?
+                      # COTTON EYE JOE??!!
+            
+            sigma = np.var(values)
+            avg   = np.mean(values)
+            max_keep = avg + alpha*sigma
+            min_keep = avg - alpha*sigma
             mask = np.logical_or(values >= max_keep, values <= min_keep)
             values_masked = np.ma.masked_array(values, mask=mask)
             avg = np.mean(values_masked, axis=0)
@@ -159,8 +194,21 @@ def combination_alogs(rgb_vec, algo):
             #print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
         case ALGO.AVG_SIGMA_CLIPPING:
-            # aron
-            return None
+            # Aron
+            x_len = len(rgb_vec[0])//2
+            y_len = len(rgb_vec[0][0])//2
+            i_len = len(rgb_vec)
+            #print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
+            N = 16
+            p = Pool(N)
+            results = []
+            for i in range(N):
+                arg = (rgb_vec, x_len//N*i, x_len//N*(i+1), y_len)
+                results.append(p.apply_async(avg_sig_clipping, arg))
+            ret = np.concatenate([res.get(timeout=1000) for res in results])
+
+            #print(f'shape post: {ret.shape}, {ret.dtype}')
+            return ret
         case ALGO.NO_WEIGHTING_NO_REJECT:
             # Louis
             return None

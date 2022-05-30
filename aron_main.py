@@ -10,9 +10,9 @@ from combination_algos import *
 def aron_main():
     #path = './data/Darks/Darks1.NEF'
     
-    base   = './data/Lights/darktable_exported/Lights'
-    #base   = './data/Darks/darktable_exported/Darks'
-    length = 36
+    #base   = './data/Lights/darktable_exported/Lights'
+    base   = './data2/Darks/Darks'
+    length = 12
     paths  = [f'{base}{i}.jpg' for i in range(1,length+1)]
     
     rgb_vec = []
