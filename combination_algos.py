@@ -18,7 +18,7 @@ class ALGO(Enum):
 def avg(rgb_vec, start_x, stop_x, y_len):
     x_len = stop_x - start_x
     i_len = len(rgb_vec)
-    ret = np.zeros([x_len, y_len, 3], dtype=np.uint8)
+    ret = np.zeros([x_len, y_len, 3])
     for x in range(start_x, stop_x):
         if start_x == 0:
             print(f'x: {x}/{stop_x}')
@@ -88,7 +88,7 @@ def combination_alogs(rgb_vec, algo):
                 results.append(p.apply_async(avg, arg))
 
             ret = np.concatenate([res.get(timeout=100) for res in results])
-
+            ret = rescale_to_uint8(ret);
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
         case ALGO.MEDIAN:
@@ -122,8 +122,21 @@ def combination_alogs(rgb_vec, algo):
             #print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
         case ALGO.SIGMA_CLIPPING:
-            # Louis
-            return None
+            # Aron
+            x_len = len(rgb_vec[0])//8
+            y_len = len(rgb_vec[0][0])//8
+            i_len = len(rgb_vec)
+            #print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
+            N = 16
+            p = Pool(N)
+            results = []
+            for i in range(N):
+                arg = (rgb_vec, x_len//N*i, x_len//N*(i+1), y_len)
+                results.append(p.apply_async(sig_clipping, arg))
+            ret = np.concatenate([res.get(timeout=1000) for res in results])
+
+            #print(f'shape post: {ret.shape}, {ret.dtype}')
+            return ret
         case ALGO.AVG_SIGMA_CLIPPING:
             # aron
             return None
