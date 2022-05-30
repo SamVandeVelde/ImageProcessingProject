@@ -1,14 +1,30 @@
 import rawpy
 from matplotlib import pyplot as plt
+from PIL import Image
+
+
+from combination_algos import *
+
 
 
 def aron_main():
-    path = './data/Darks/Darks1.NEF'
-    with rawpy.imread(path) as raw:
-        rgb = raw.postprocess()
-        print(rgb)
-        plt.imshow(rgb, interpolation='nearest')
-        plt.show()
+    #path = './data/Darks/Darks1.NEF'
+    
+    base   = './data/Lights/Lights'
+    length = 36
+    paths  = [f'{base}{i}.NEF' for i in range(1,length)]
+    
+    rgb_vec = []
+    for path in paths:
+        print(path)
+        raw    =  rawpy.imread(path)
+        rgb_vec.append(raw.postprocess())
 
+    combination_alogs(rgb_vec, ALGO.NO_REJECTION)
+
+    img    = Image.fromarray(rgb)
+    plt.imshow(img)
+    plt.show()
 
 aron_main()
+
