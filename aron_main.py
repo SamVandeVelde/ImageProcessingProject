@@ -7,6 +7,26 @@ from combination_algos import *
 
 
 
+def dark_res():
+    #path = './data/Darks/Darks1.NEF'
+    
+    #base   = './data/Lights/darktable_exported/Lights'
+    base   = './data2/Darks/Darks'
+    length = 12
+    paths  = [f'{base}{i}.jpg' for i in range(1,length+1)]
+    
+    rgb_vec = []
+    for path in paths:
+        print(path)
+        rgb    =  imageio.imread(path)
+        rgb_vec.append(rgb)
+
+    rgb = combination_alogs(rgb_vec, ALGO.NO_REJECTION)
+
+    img    = Image.fromarray(rgb)
+    img.show()
+
+
 def aron_main():
     #path = './data/Darks/Darks1.NEF'
     
