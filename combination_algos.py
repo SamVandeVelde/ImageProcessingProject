@@ -13,7 +13,7 @@ class ALGO(Enum):
     NO_WEIGHTING_NO_REJECT = 6,
     TURKEYS_BIWEIGHT = 7
 
-def combination_alogs(rgb_vec, algo):
+def combination_alogs(rgb_vec, algos):
     match algos:
         case ALGO.NO_REJECTION:
             # aron
