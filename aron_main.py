@@ -11,8 +11,8 @@ def aron_main():
     #path = './data/Darks/Darks1.NEF'
     
     base   = './data/Lights/Lights'
-    length = 36
-    paths  = [f'{base}{i}.NEF' for i in range(1,length)]
+    length = 2#36
+    paths  = [f'{base}{i}.NEF' for i in range(1,length+1)]
     
     rgb_vec = []
     for path in paths:
@@ -20,7 +20,8 @@ def aron_main():
         raw    =  rawpy.imread(path)
         rgb_vec.append(raw.postprocess())
 
-    combination_alogs(rgb_vec, ALGO.NO_REJECTION)
+    rgb = combination_alogs(rgb_vec, ALGO.NO_REJECTION)
+    print(f'shape: {rgb.shape}')
 
     img    = Image.fromarray(rgb)
     plt.imshow(img)
