@@ -10,9 +10,11 @@ from combination_algos import *
 def dark_res():
     #path = './data/Darks/Darks1.NEF'
     
+
     #base   = './data/Lights/darktable_exported/Lights'
     base   = './data2/Darks/Darks'
     length = 12
+
     paths  = [f'{base}{i}.jpg' for i in range(1,length+1)]
     
     rgb_vec = []
@@ -21,7 +23,7 @@ def dark_res():
         rgb    =  imageio.imread(path)
         rgb_vec.append(rgb)
 
-    rgb = combination_alogs(rgb_vec, ALGO.NO_REJECTION)
+    rgb = combination_alogs(rgb_vec, ALGO.MEDIAN)
 
     img    = Image.fromarray(rgb)
     img.show()

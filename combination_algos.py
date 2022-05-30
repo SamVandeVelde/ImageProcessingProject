@@ -31,12 +31,13 @@ def avg(rgb_vec, start_x, stop_x, y_len):
     return ret
 
 
-def median(rgb_vec, start_x, stop_x):
-    y_len = len(rgb_vec[0][0])
+def median(rgb_vec, start_x, stop_x, y_len):
     x_len = stop_x - start_x
     i_len = len(rgb_vec)
     ret = np.zeros([x_len, y_len, 3], dtype=np.uint8)
-    for x in range(x_len):
+    for x in range(start_x, stop_x):
+        if start_x == 0:
+            print(f'x: {x}/{stop_x}')
         for y in range(y_len):
             r_values = []
             g_values = []
@@ -47,10 +48,10 @@ def median(rgb_vec, start_x, stop_x):
                 g_values.append(pixel[1])
                 b_values.append(pixel[2])
             median_result = np.zeros([3])
-            median_result[0] = np.median(r_values)
-            median_result[1] = np.median(g_values)
-            median_result[2] = np.median(b_values)
-            ret[x, y, :] = median_result.astype('d')
+            print(f'x: {x}/{stop_x}')
+            print(f'y: {y}')
+            print(f'startx: {start_x}')
+            ret[x - start_x, y, :] = median_result
     return ret
 
 
@@ -128,11 +129,35 @@ def avg_sig_clipping(rgb_vec, start_x, stop_x, y_len):
             ret[x-start_x,y,:] = avg
     return ret
 
+def tukeys_biweight(rgb_vec,start_x,stop_x,y_len):
+    c = 1 #TODO 5*SIGMA
+    x_len = stop_x - start_x
+    i_len = len(rgb_vec)
+    ret = np.zeros([x_len, y_len,3], dtype=np.uint8)
+    for x in range(start_x, stop_x):
+        if start_x == 0:
+            print(f'x: {x}/{stop_x}')
+        for y in range(y_len):
+            avg = np.zeros([3])
+            for index in range(i_len):
+                temp_value = rgb_vec[index][x][y]
+                weighted_value = tukey_function(temp_value,c)
+                avg += weighted_value
+            avg = avg / i_len
+            ret[x - start_x, y, :] = avg
+    return ret
+
+def tukey_function(x,c):
+    if abs(x) > c:
+        return 0
+    else:
+        return x*pow(1-pow(x/c,2),2)
+
 def combination_alogs(rgb_vec, algo):
     match algo:
         case ALGO.NO_REJECTION:
             # aron
-            x_len = len(rgb_vec[0])//1
+            x_len = len(rgb_vec[0])//8
             y_len = len(rgb_vec[0][0])//1
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
@@ -149,16 +174,16 @@ def combination_alogs(rgb_vec, algo):
             return ret
         case ALGO.MEDIAN:
             # Sam
-            x_len = len(rgb_vec[0])
-            y_len = len(rgb_vec[0][0])
+            x_len = len(rgb_vec[0])//8
+            y_len = len(rgb_vec[0][0])//8
             i_len = len(rgb_vec)
             N = 16
             p = Pool(N)
             results = []
             for i in range(N):
-                arg = (rgb_vec, x_len // N * i, x_len // N * (i + 1))
+                arg = (rgb_vec, x_len // N * i, x_len // N * (i + 1), y_len)
                 results.append(p.apply_async(median, arg))
-            ret = np.concatenate([res.get(timeout=100) for res in results])
+            ret = np.concatenate([res.get(timeout=1000) for res in results])
             return ret
 
         case ALGO.MINMAX:
