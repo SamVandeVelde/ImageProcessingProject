@@ -13,7 +13,7 @@ def dark_res():
 
     #base   = './data/Lights/darktable_exported/Lights'
     base   = './data2/Darks/Darks'
-    length = 12
+    length = 2
 
     paths  = [f'{base}{i}.jpg' for i in range(1,length+1)]
     
@@ -23,8 +23,8 @@ def dark_res():
         rgb    =  imageio.imread(path)
         rgb_vec.append(rgb)
 
-    rgb = combination_alogs(rgb_vec, ALGO.MEDIAN)
-
+    rgb = combination_alogs(rgb_vec, ALGO.TURKEYS_BIWEIGHT)
+    rgb = rgb.as_type('uint8')
     img    = Image.fromarray(rgb)
     img.show()
 

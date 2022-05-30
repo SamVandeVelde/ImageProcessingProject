@@ -130,28 +130,37 @@ def avg_sig_clipping(rgb_vec, start_x, stop_x, y_len):
     return ret
 
 def tukeys_biweight(rgb_vec,start_x,stop_x,y_len):
-    c = 1 #TODO 5*SIGMA
     x_len = stop_x - start_x
     i_len = len(rgb_vec)
-    ret = np.zeros([x_len, y_len,3], dtype=np.uint8)
+    ret = np.zeros([x_len, y_len,3], dtype=np.int16)
     for x in range(start_x, stop_x):
         if start_x == 0:
             print(f'x: {x}/{stop_x}')
         for y in range(y_len):
+            values = np.zeros([i_len, 3])
+            for index in range(i_len):
+                values[index,:] = rgb_vec[index][x][y]
+            sigma = np.var(values)
+            med = np.median(values)
+            #print(f'med: {med}')
+            c = 5*sigma
             avg = np.zeros([3])
             for index in range(i_len):
-                temp_value = rgb_vec[index][x][y]
-                weighted_value = tukey_function(temp_value,c)
+                temp_value = rgb_vec[index][x][y] 
+                #print(f'temp value: {temp_value}')
+                weighted_value = np.zeros([3])
+                for i in range(len(temp_value)):
+                    weighted_value[i] = tukey_function(temp_value[i],c, med)
                 avg += weighted_value
             avg = avg / i_len
             ret[x - start_x, y, :] = avg
     return ret
 
-def tukey_function(x,c):
-    if abs(x) > c:
+def tukey_function(x,c,med):
+    if abs(x-med) > c:
         return 0
     else:
-        return x*pow(1-pow(x/c,2),2)
+        return med + (x-med)*pow(1-pow((x-med)/c,2),2)
 
 def combination_alogs(rgb_vec, algo):
     match algo:
@@ -238,7 +247,20 @@ def combination_alogs(rgb_vec, algo):
             # Louis
             return None
         case ALGO.TURKEYS_BIWEIGHT:
-            # aron
-            return None
+            # SAM
+            x_len = len(rgb_vec[0])//2
+            y_len = len(rgb_vec[0][0])//2
+            i_len = len(rgb_vec)
+            #print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
+            N = 16
+            p = Pool(N)
+            results = []
+            for i in range(N):
+                arg = (rgb_vec, x_len//N*i, x_len//N*(i+1), y_len)
+                results.append(p.apply_async(tukeys_biweight, arg))
+            ret = np.concatenate([res.get(timeout=1000) for res in results])
+
+            #print(f'shape post: {ret.shape}, {ret.dtype}')
+            return ret
         case _:
             assert False
