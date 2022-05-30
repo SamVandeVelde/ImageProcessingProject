@@ -85,7 +85,7 @@ def combination_alogs(rgb_vec, algo):
             results = []
             for i in range(N):
                 arg = (rgb_vec, x_len//N*i, x_len//N*(i+1), y_len)
-                results.append(p.apply_async(f, arg))
+                results.append(p.apply_async(avg, arg))
 
             ret = np.concatenate([res.get(timeout=100) for res in results])
 
