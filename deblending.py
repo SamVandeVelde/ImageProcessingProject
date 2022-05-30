@@ -41,7 +41,7 @@ def get_alpha(loc1, loc2):
 
 
 def get_distance(loc1, loc2):
-    long_sq = (loc1[0] - loc2[0], 2) + pow(loc1[1] - loc2[1], 2)
+    long_sq = pow(loc1[0] - loc2[0], 2) + pow(loc1[1] - loc2[1], 2)
     return math.sqrt(long_sq)
 
 
