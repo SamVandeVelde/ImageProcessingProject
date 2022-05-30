@@ -78,6 +78,6 @@ B = np.zeros((2, 1))
 B[0, 0] = sum(target_meas_flux)
 B[1, 0] = sum(nontarget_meas_flux)
 
-x = np.linalg.solve(A,B)
+x = np.linalg.solve(A, B)
 I0 = x[0]
 I1 = x[1]
