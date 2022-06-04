@@ -1,6 +1,4 @@
 import numpy as np
-import rawpy
-from PIL import Image
 
 
 def noise_equal(rgb):
