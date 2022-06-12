@@ -1,6 +1,8 @@
 import numpy as np
 import rawpy
 from PIL import Image
+from alignment import *
+import cv2
 
 from combination_algos import *
 from noise_equalizing import *
@@ -18,8 +20,19 @@ if __name__ == '__main__':
         print(rgb.shape)
         rgb_vec.append(rgb)
 
-    rgb = combination_alogs(rgb_vec, ALGO.MINMAX)
+    rgb = rgb_vec[0]
+    h = rgb_vec[0].shape[0]
+    w = rgb_vec[0].shape[1]
+    print(w)
+    print(h)
+    total_images = len(rgb_vec)
+    print(total_images)
+    for i in range(total_images):
+        M = match(rgb_vec[0], rgb_vec[i])
+        rgb_vec[i] = cv2.warpPerspective(rgb_vec[i], M, (w, h))
 
+    rgb = combination_alogs(rgb_vec, ALGO.NO_REJECTION)
+    #print(rgb)
     img = Image.fromarray(rgb)
     img.show()
 

@@ -239,8 +239,8 @@ def combination_alogs(rgb_vec, algo):
             return ret
         case ALGO.AVG_SIGMA_CLIPPING:
             # Aron
-            x_len = len(rgb_vec[0]) // 2
-            y_len = len(rgb_vec[0][0]) // 2
+            x_len = len(rgb_vec[0]) # // 2
+            y_len = len(rgb_vec[0][0]) # // 2
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
             N = 16
@@ -249,7 +249,7 @@ def combination_alogs(rgb_vec, algo):
             for i in range(N):
                 arg = (rgb_vec, x_len // N * i, x_len // N * (i + 1), y_len)
                 results.append(p.apply_async(avg_sig_clipping, arg))
-            ret = np.concatenate([res.get(timeout=1000) for res in results])
+            ret = np.concatenate([res.get(timeout=10000) for res in results])
 
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
