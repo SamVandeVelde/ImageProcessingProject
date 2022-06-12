@@ -22,7 +22,8 @@ def match(im1, im2):
     matches = sorted(matches, key=lambda x: x.distance)
     matches = matches[:len(matches) // 10]
     if len(matches) < 10:
-        raise Exception("<10 matching descriptors, poor match")
+        print("<10 matching descriptors, poor match")
+        #raise Exception("<10 matching descriptors, poor match")
     # Get the coordinates of the matching stars in each image
     src_pts = np.float32([kp1[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
     dst_pts = np.float32([kp2[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
@@ -31,5 +32,6 @@ def match(im1, im2):
     # Mask tells us which matches seem internally consistent.
     M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
     if mask.sum() < 10:
-        raise Exception("<10 RANSAC inlier descriptors, poor match")
+        print("<10 RANSAC inlier descriptors, poor match")
+        #raise Exception("<10 RANSAC inlier descriptors, poor match")
     return M

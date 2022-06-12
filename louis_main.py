@@ -8,6 +8,7 @@ from combination_algos import *
 from noise_equalizing import *
 from os import listdir
 from os.path import isfile, join
+from alignment_madeline import *
 
 if __name__ == '__main__':
     base_path = 'data/New/'
@@ -27,14 +28,19 @@ if __name__ == '__main__':
     print(h)
     total_images = len(rgb_vec)
     print(total_images)
-    for i in range(total_images):
-        M = match(rgb_vec[0], rgb_vec[i])
-        rgb_vec[i] = cv2.warpPerspective(rgb_vec[i], M, (w, h))
+    # for the allignment we use the grayscale image
+    base_gray = np.dot(rgb_vec[0][..., :3], [0.299, 0.587, 0.114])
+    for i in range(1,total_images):
+        # M = match(rgb_vec[0], rgb_vec[i])
+        # rgb = cv2.warpPerspective(rgb_vec[i], M, (w, h))
+        gray_im = np.dot(rgb_vec[i][...,:3], [0.299, 0.587, 0.114])
+        rgb = alignImages(base_gray, gray_im)
+        img = Image.fromarray(rgb)
+        img.show()
 
-    rgb = combination_alogs(rgb_vec, ALGO.NO_REJECTION)
+    #rgb = combination_alogs(rgb_vec, ALGO.NO_REJECTION)
     #print(rgb)
-    img = Image.fromarray(rgb)
-    img.show()
+
 
     # raw = rawpy.imread('data/New/IMG_0702.CR2')
     # rgb_im = raw.postprocess(use_camera_wb=True, no_auto_bright=True)#no_auto_scale=True)#, no_auto_bright=True)
