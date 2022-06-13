@@ -19,6 +19,8 @@ if __name__ == '__main__':
         raw = rawpy.imread(base_path+path)
         rgb = raw.postprocess(use_camera_wb=True, no_auto_bright=True)
         print(rgb.shape)
+        # img = Image.fromarray(rgb)
+        # img.show()
         rgb_vec.append(rgb)
 
     rgb = rgb_vec[0]
@@ -29,17 +31,19 @@ if __name__ == '__main__':
     total_images = len(rgb_vec)
     print(total_images)
     # for the allignment we use the grayscale image
-    base_gray = np.dot(rgb_vec[0][..., :3], [0.299, 0.587, 0.114])
-    for i in range(1,total_images):
-        # M = match(rgb_vec[0], rgb_vec[i])
-        # rgb = cv2.warpPerspective(rgb_vec[i], M, (w, h))
-        gray_im = np.dot(rgb_vec[i][...,:3], [0.299, 0.587, 0.114])
-        rgb = alignImages(base_gray, gray_im)
-        img = Image.fromarray(rgb)
-        img.show()
+    # base_gray = np.dot(rgb_vec[0][..., :3], [0.299, 0.587, 0.114])
+    # for i in range(1,total_images):
+    #     # M = match(rgb_vec[0], rgb_vec[i])
+    #     # rgb = cv2.warpPerspective(rgb_vec[i], M, (w, h))
+    #     gray_im = np.dot(rgb_vec[i][...,:3], [0.299, 0.587, 0.114])
+    #     rgb = alignImages(base_gray, gray_im)
+    #     img = Image.fromarray(rgb)
+    #     img.show()
 
-    #rgb = combination_alogs(rgb_vec, ALGO.NO_REJECTION)
+    rgb = combination_alogs(rgb_vec, ALGO.AVG_SIGMA_CLIPPING)
     #print(rgb)
+    img = Image.fromarray(rgb)
+    img.show()
 
 
     # raw = rawpy.imread('data/New/IMG_0702.CR2')

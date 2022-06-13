@@ -94,14 +94,14 @@ def sig_clipping(rgb_vec, start_x, stop_x, y_len):
             for index in range(i_len):
                 values[index, :] = rgb_vec[index][x][y]
 
-            alpha = 5  # WHERE DO I COME FROM
+            alpha = 0.67  # WHERE DO I COME FROM # 0.67 => keep 50% of the pixels
             # WERE DO I GO?
             # COTTON EYE JOE??!!
 
             sigma, med = median_var(values)
             max_keep = med + alpha * sigma
             min_keep = med - alpha * sigma
-            mask = np.logical_or(values >= max_keep, values <= min_keep)
+            mask = np.logical_or(values > max_keep, values < min_keep)
             values_masked = np.ma.masked_array(values, mask=mask)
             avg = np.mean(values_masked, axis=0)
             ret[x - start_x, y, :] = avg
@@ -120,7 +120,7 @@ def avg_sig_clipping(rgb_vec, start_x, stop_x, y_len):
             for index in range(i_len):
                 values[index, :] = rgb_vec[index][x][y]
 
-            alpha = 5  # WHERE DO I COME FROM
+            alpha = 0.67  # WHERE DO I COME FROM # 0.67 => keep 50% of the pixels
             # WERE DO I GO?
             # COTTON EYE JOE??!!
 
@@ -128,7 +128,8 @@ def avg_sig_clipping(rgb_vec, start_x, stop_x, y_len):
             avg = np.mean(values)
             max_keep = avg + alpha * sigma
             min_keep = avg - alpha * sigma
-            mask = np.logical_or(values >= max_keep, values <= min_keep)
+            mask = np.logical_or(values > max_keep, values < min_keep)
+
             values_masked = np.ma.masked_array(values, mask=mask)
             avg = np.mean(values_masked, axis=0)
             ret[x - start_x, y, :] = avg
@@ -239,8 +240,8 @@ def combination_alogs(rgb_vec, algo):
             return ret
         case ALGO.AVG_SIGMA_CLIPPING:
             # Aron
-            x_len = len(rgb_vec[0]) # // 2
-            y_len = len(rgb_vec[0][0]) # // 2
+            x_len = len(rgb_vec[0])  # // 8
+            y_len = len(rgb_vec[0][0]) # // 8
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
             N = 16
@@ -255,6 +256,21 @@ def combination_alogs(rgb_vec, algo):
             return ret
         case ALGO.NO_WEIGHTING_NO_REJECT:
             # Louis
+            x_len = len(rgb_vec[0])  # // 8
+            print(x_len)
+            y_len = len(rgb_vec[0][0])  # // 1
+            print(y_len)
+            i_len = len(rgb_vec)
+            # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
+            N = 16
+            p = Pool(N)
+            results = []
+            for i in range(N):
+                arg = (rgb_vec, x_len // N * i, x_len // N * (i + 1), y_len)
+                results.append(p.apply_async(avg, arg))
+
+            ret = np.concatenate([res.get(timeout=1000) for res in results])
+            ret = noise_equal(ret)
             return None
         case ALGO.TURKEYS_BIWEIGHT:
             # SAM
