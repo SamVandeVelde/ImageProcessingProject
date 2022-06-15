@@ -4,7 +4,7 @@ from multiprocessing import Pool
 import math
 import numpy as np
 
-from noise_equalizing import *
+from gamma_correction import *
 
 
 class ALGO(IntEnum):

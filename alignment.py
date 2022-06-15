@@ -1,37 +1,84 @@
-import cv2
 import numpy as np
+from PIL import Image
+import scipy
+from structure_tensor import structure_tensor_2d
+
+import cv2
+
+def alignImages(img1_name, img2_name, col_img):
+    first_img = Image.open(img1_name)
+    second_img = Image.open(img2_name)
+    first_img_arr = np.array(first_img)
+    second_img_arr = np.array(second_img)
+    DoG_img1 = DoGOperator(first_img_arr)
+    DoG_img2 = DoGOperator(second_img_arr)
+    threshold1 = calculateThreshold(first_img_arr)
+    threshold2 = calculateThreshold(second_img_arr)
+    featurePoints1 = featurePoints(DoG_img1, threshold1)
+    featurePoints2 = featurePoints(DoG_img2, threshold2)
+    features1 = createFeatures(img1_name)
+    features2 = createFeatures(img2_name)
+    matches = matchFeatures(features1, features2)
+    img1 = cv2.imread(img1_name,cv2.IMREAD_GRAYSCALE)
+    img2 = cv2.imread(img2_name,cv2.IMREAD_GRAYSCALE)
+    new_img, J = executeMatching(matches, featurePoints1, featurePoints2, img1, img2, col_img)
+    return new_img, J
 
 
-# compute a homography (3x3 transform matrix for 2D homogenous coordinates)
-# that projects image 1 onto image 2. We use this to line up multiple images
-# of the sky that were taken at different times, with the camera at a slightly
-# different angle, etc.
+# Figure out the DoGOperator for the image's numpy array
+def DoGOperator(np_arr):
+    standard_deviation = np.std(np_arr)
+    first_gaussian_filter = scipy.ndimage.gaussian_filter(np_arr,standard_deviation)
+    second_gaussian_filter = scipy.ndimage.gaussian_filter(np_arr,1.6*standard_deviation)
+    DoG = 1.6*(second_gaussian_filter - first_gaussian_filter)/(standard_deviation*2)
+    return DoG
 
 
-def match(im1, im2):
-    # OpenCV ORB requires uint8 for some reason
+# calculate the threshold for the image's numpy array
+def calculateThreshold(np_arr):
+    avg = np.mean(np_arr)
+    standard_deviation = np.std(np_arr)
+    M = structure_tensor_2d(np_arr,standard_deviation,avg)
+    threshold = np.linalg.det()(M) - 0.06*((np.trace(M))**2)
+    return threshold
 
-    # Identify interesting points in the image (i.e. stars)
-    det = cv2.ORB_create(nfeatures=50000)
-    kp1, desc1 = det.detectAndCompute(im1, None)
-    kp2, desc2 = det.detectAndCompute(im2, None)
-    # Matches up interesting points in both images, based on their descriptors
-    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
-    matches = bf.match(desc1, desc2)
-    # Pick the top 10% of matches (by hamming distance of their descriptor vectors)
-    matches = sorted(matches, key=lambda x: x.distance)
-    matches = matches[:len(matches) // 10]
-    if len(matches) < 10:
-        print("<10 matching descriptors, poor match")
-        #raise Exception("<10 matching descriptors, poor match")
-    # Get the coordinates of the matching stars in each image
-    src_pts = np.float32([kp1[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
-    dst_pts = np.float32([kp2[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
-    # Calculate a homography matrix from our set of probably-matching stars.
-    # The RANSAC algorithm will try to discard inconsistent outliers.
-    # Mask tells us which matches seem internally consistent.
-    M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
-    if mask.sum() < 10:
-        print("<10 RANSAC inlier descriptors, poor match")
-        #raise Exception("<10 RANSAC inlier descriptors, poor match")
-    return M
+
+# locate the feature points for an image
+# np_arr: the image's numpy array
+def featurePoints(np_arr, value):
+    return np.where(np_arr>value)
+
+
+# Compute the descriptors for the image
+# Source of the code: https://pyimagesearch.com/2020/08/31/image-alignment-and-registration-with-opencv/
+def createFeatures(img_name):
+    img = cv2.imread(img_name,cv2.IMREAD_GRAYSCALE)
+    surf = cv2.xfeatures2d.SURF_CREATE()
+    __, descriptors = surf.DetectAndCompute(img, None)
+    return descriptors
+
+# Find matches for both images
+# Source of the code: https://stackoverflow.com/questions/62623035/opencv-cuda-surf-performance-vs-cpu-version
+#
+def matchFeatures(descriptors1, descriptors2):
+    matcherCPU = cv2.BFMatcher(cv2.NORM_L2)
+    matches = matcherCPU.knnMatch(descriptors1, descriptors2, k=2)
+    selected_matches = sorted(matches, lambda x: x.distance)
+    selected_matches = selected_matches[:, int(len(selected_matches)*0.50)]
+    return matches
+
+
+# Execute the image alignment for  both images
+# Source of the code: https://pyimagesearch.com/2020/08/31/image-alignment-and-registration-with-opencv/
+def executeMatching(matches,pointsA, pointsB,im1, col_img):
+    points1 = np.zeros((len(matches),2),dtype="float")
+    points2 = np.zeros((len(matches),2),dtype="float")
+
+    for (i,j) in enumerate(matches):
+        points1[i] = pointsA[j.queryIdx].pt
+        points2[i] = pointsB[j.trainIdx].pt
+
+    (J, new_mask) = cv2.findHomography(points1, points2, method = cv2.RANSAC)
+    heights, widths, channels = col_img.shape
+    new_im1 = cv2.warpPerspective(col_img, J, (widths, heights, channels))
+    return new_im1,J

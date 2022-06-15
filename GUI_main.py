@@ -1,20 +1,73 @@
 import numpy as np
 import rawpy
 from PIL import Image
-from alignment import *
 import cv2
 from tkinter import *
 from tkinter import filedialog
 from tkinter import ttk
 
 from combination_algos import *
-from noise_equalizing import *
+from gamma_correction import *
 from os import listdir
 from os.path import isfile, join
-from alignment_madeline import *
+from alignment import *
 
 
 def perform_stacking():
+
+    global base_path
+    global algorithm_index
+    global label_error
+    global resolution_scaler
+    if label_error:
+        label_error.destroy()
+
+    if algorithm_index == 0:
+        print('SELECT ALGO')
+        label_error = Label(gui, text="ERROR no algorithm selected!", fg="red")
+        label_error.grid(column=0, row=5)
+        return
+    if base_path == '':
+        print('SELECT basepath')
+        label_error = Label(gui, text="ERROR no base path selected!", fg="red")
+        label_error.grid(column=0, row=5)
+        return
+
+    image_paths = [f for f in listdir(base_path) if isfile(join(base_path, f))]
+    rgb_vec = []
+    for path in image_paths:
+        raw = rawpy.imread(base_path + '/' + path)
+        rgb = raw.postprocess(use_camera_wb=True, no_auto_bright=True)
+        print(rgb.shape)
+        rgb_vec.append(rgb)
+
+    rgb = rgb_vec[0]
+    img = Image.fromarray(rgb)
+    img.show() # The base image
+    h = rgb_vec[0].shape[0]
+    w = rgb_vec[0].shape[1]
+    print(f'w:{w}')
+    print(f'h:{h}')
+    total_images = len(rgb_vec)
+    print(f'total_images:{total_images}')
+    # for the alignment we use the grayscale image
+    # base_gray = np.dot(rgb_vec[0][..., :3], [0.299, 0.587, 0.114])
+    # for i in range(1,total_images):
+    #     # M = match(rgb_vec[0], rgb_vec[i])
+    #     # rgb = cv2.warpPerspective(rgb_vec[i], M, (w, h))
+    #     gray_im = np.dot(rgb_vec[i][...,:3], [0.299, 0.587, 0.114])
+    #     rgb = alignImages(base_gray, gray_im)
+    #     img = Image.fromarray(rgb)
+    #     img.show()
+    scaler = int(resolution_scaler.get())
+    print(f'resolution_scaler.get(): {scaler}')
+    rgb = combination_alogs(rgb_vec, ALGO(algorithm_index), scaler)
+    # print(rgb)
+    img = Image.fromarray(rgb)
+    img.show()
+
+
+def perform_stacking_broken_alignment():
 
     global base_path
     global algorithm_index
