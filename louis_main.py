@@ -81,6 +81,7 @@ def callback(*args):
 if __name__ == '__main__':
 
     gui = Tk()
+    gui.title('The image stacker 9001')
     gui.geometry('800x200')
     base_path = ''  # empty string to init
     algorithm_index = 0  # 0 to init
