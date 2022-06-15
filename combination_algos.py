@@ -34,21 +34,9 @@ def avg(rgb_vec, start_x, stop_x, y_len):
 
 
 def median(rgb_vec, start_x, stop_x, y_len):
-    x_len = stop_x - start_x
-    i_len = len(rgb_vec)
-    ret = np.zeros([x_len, y_len, 3], dtype=np.uint8)
-    for x in range(start_x, stop_x):
-        if start_x == 0:
-            print(f'x: {x}/{stop_x}')
-        for y in range(y_len):
-            print(rgb_vec[:][x][y])
-            median_result = np.median(rgb_vec[:][x][y], 0)
-            print(median_result)
-            print(f'x: {x}/{stop_x}')
-            print(f'y: {y}')
-            print(f'startx: {start_x}')
-            ret[x - start_x, y, :] = np.round(median_result)
-    return ret
+    rbg_stack = np.stack(rgb_vec, axis=0)
+    print(f'aaaaaaaaaa {rbg_stack.shape}, {rbg_stack[:,start_x:stop_x,1:y_len,:].shape}')
+    return np.round(np.median(rbg_stack[:,start_x:stop_x,1:y_len,:], 0))
 
 
 def min_max(rgb_vec, start_x, stop_x, y_len):
@@ -187,7 +175,8 @@ def combination_alogs(rgb_vec, algo, divisor):
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
         case ALGO.MEDIAN:
-            # Sam
+            # Sam tried
+            # Aron Succes!
             x_len = len(rgb_vec[0]) // divisor
             y_len = len(rgb_vec[0][0]) // divisor
             i_len = len(rgb_vec)
