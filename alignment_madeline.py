@@ -2,8 +2,6 @@ import numpy as np
 from PIL import Image
 import scipy
 from structure_tensor import structure_tensor_2d
-import diplib as dp
-import pywt
 import math
 import matplotlib.pyplot as plt
 import cv2
@@ -42,7 +40,7 @@ def calculateThreshold(np_arr):
     avg = np.mean(np_arr)
     standard_deviation = np.std(np_arr)
     M = structure_tensor_2d(np_arr,standard_deviation,avg)
-    threshold = dp.Determinant(M) - 0.06*((dp.Trace(M))**2)
+    threshold = np.linalg.det()(M) - 0.06*((np.trace(M))**2)
     return threshold
 
 
