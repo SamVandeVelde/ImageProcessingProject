@@ -41,15 +41,7 @@ def median(rgb_vec, start_x, stop_x, y_len):
         if start_x == 0:
             print(f'x: {x}/{stop_x}')
         for y in range(y_len):
-            r_values = []
-            g_values = []
-            b_values = []
-            for index in range(i_len):
-                pixel = rgb_vec[index][x][y]
-                r_values.append(pixel[0])
-                g_values.append(pixel[1])
-                b_values.append(pixel[2])
-            median_result = np.zeros([3])
+            median_result = np.median(rgb_vec,0)
             print(f'x: {x}/{stop_x}')
             print(f'y: {y}')
             print(f'startx: {start_x}')
