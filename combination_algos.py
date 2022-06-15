@@ -181,7 +181,7 @@ def combination_alogs(rgb_vec, algo, divisor):
                 results.append(p.apply_async(avg, arg))
 
             ret = np.concatenate([res.get(timeout=1000) for res in results])
-            ret = noise_equal(ret)
+            ret = gamma_correction(ret, 1)
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
         case ALGO.MEDIAN:
@@ -196,6 +196,7 @@ def combination_alogs(rgb_vec, algo, divisor):
                 arg = (rgb_vec, x_len // N * i, x_len // N * (i + 1), y_len)
                 results.append(p.apply_async(median, arg))
             ret = np.concatenate([res.get(timeout=1000) for res in results])
+            ret = gamma_correction(ret, 1)
             return ret
 
         case ALGO.MINMAX:
@@ -211,7 +212,7 @@ def combination_alogs(rgb_vec, algo, divisor):
                 arg = (rgb_vec, x_len // N * i, x_len // N * (i + 1), y_len)
                 results.append(p.apply_async(min_max, arg))
             ret = np.concatenate([res.get(timeout=1000) for res in results])
-
+            ret = gamma_correction(ret, 1)
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
         case ALGO.SIGMA_CLIPPING:
@@ -227,7 +228,7 @@ def combination_alogs(rgb_vec, algo, divisor):
                 arg = (rgb_vec, x_len // N * i, x_len // N * (i + 1), y_len)
                 results.append(p.apply_async(sig_clipping, arg))
             ret = np.concatenate([res.get(timeout=1000) for res in results])
-
+            ret = gamma_correction(ret, 1)
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
         case ALGO.AVG_SIGMA_CLIPPING:
@@ -243,7 +244,7 @@ def combination_alogs(rgb_vec, algo, divisor):
                 arg = (rgb_vec, x_len // N * i, x_len // N * (i + 1), y_len)
                 results.append(p.apply_async(avg_sig_clipping, arg))
             ret = np.concatenate([res.get(timeout=10000) for res in results])
-
+            ret = gamma_correction(ret, 1)
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
         case ALGO.NO_WEIGHTING_NO_REJECT:
@@ -262,7 +263,7 @@ def combination_alogs(rgb_vec, algo, divisor):
                 results.append(p.apply_async(avg, arg))
 
             ret = np.concatenate([res.get(timeout=1000) for res in results])
-            ret = gamma_correction(ret, 1.5)
+            ret = gamma_correction(ret, 1)
             return ret
         case ALGO.TURKEYS_BIWEIGHT:
             # SAM
@@ -277,7 +278,7 @@ def combination_alogs(rgb_vec, algo, divisor):
                 arg = (rgb_vec, x_len // N * i, x_len // N * (i + 1), y_len)
                 results.append(p.apply_async(tukeys_biweight, arg))
             ret = np.concatenate([res.get(timeout=1000) for res in results])
-
+            ret = gamma_correction(ret, 1)
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
         case _:
