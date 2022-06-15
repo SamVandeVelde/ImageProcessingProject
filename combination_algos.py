@@ -173,7 +173,7 @@ def tukey_function(x, c, med):
 
 def combination_alogs(rgb_vec, algo):
     match algo:
-        case 1: #ALGO.NO_REJECTION:
+        case ALGO.NO_REJECTION:
             # aron
             x_len = len(rgb_vec[0])  // 8
             print(x_len)
@@ -192,7 +192,7 @@ def combination_alogs(rgb_vec, algo):
             ret = noise_equal(ret)
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
-        case 2: #ALGO.MEDIAN:
+        case ALGO.MEDIAN:
             # Sam
             x_len = len(rgb_vec[0]) // 8
             y_len = len(rgb_vec[0][0]) // 8
@@ -206,7 +206,7 @@ def combination_alogs(rgb_vec, algo):
             ret = np.concatenate([res.get(timeout=1000) for res in results])
             return ret
 
-        case 3: #ALGO.MINMAX:
+        case ALGO.MINMAX:
             # aron
             x_len = len(rgb_vec[0])  // 8
             y_len = len(rgb_vec[0][0])  // 8
@@ -222,7 +222,7 @@ def combination_alogs(rgb_vec, algo):
 
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
-        case 4: #ALGO.SIGMA_CLIPPING:
+        case ALGO.SIGMA_CLIPPING:
             # Aron
             x_len = len(rgb_vec[0]) // 8
             y_len = len(rgb_vec[0][0]) // 8
@@ -238,7 +238,7 @@ def combination_alogs(rgb_vec, algo):
 
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
-        case 5: #ALGO.AVG_SIGMA_CLIPPING:
+        case ALGO.AVG_SIGMA_CLIPPING:
             # Aron
             x_len = len(rgb_vec[0])  # // 8
             y_len = len(rgb_vec[0][0]) # // 8
@@ -254,7 +254,7 @@ def combination_alogs(rgb_vec, algo):
 
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
-        case 6: #ALGO.NO_WEIGHTING_NO_REJECT:
+        case ALGO.NO_WEIGHTING_NO_REJECT:
             # Louis
             x_len = len(rgb_vec[0])  # // 8
             print(x_len)
@@ -272,7 +272,7 @@ def combination_alogs(rgb_vec, algo):
             ret = np.concatenate([res.get(timeout=1000) for res in results])
             ret = noise_equal(ret)
             return None
-        case 7: #ALGO.TURKEYS_BIWEIGHT:
+        case ALGO.TURKEYS_BIWEIGHT:
             # SAM
             x_len = len(rgb_vec[0]) // 2
             y_len = len(rgb_vec[0][0]) // 2

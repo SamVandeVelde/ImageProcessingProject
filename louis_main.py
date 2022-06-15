@@ -43,7 +43,7 @@ def perform_stacking():
     #     rgb = alignImages(base_gray, gray_im)
     #     img = Image.fromarray(rgb)
     #     img.show()
-    rgb = combination_alogs(rgb_vec, algorithm_index)
+    rgb = combination_alogs(rgb_vec, ALGO(algorithm_index))
     # print(rgb)
     img = Image.fromarray(rgb)
     img.show()
