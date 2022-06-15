@@ -43,6 +43,8 @@ def perform_stacking():
         rgb_vec.append(rgb)
 
     rgb = rgb_vec[0]
+    img = Image.fromarray(rgb)
+    img.show() # The base image
     h = rgb_vec[0].shape[0]
     w = rgb_vec[0].shape[1]
     print(f'w:{w}')
