@@ -173,11 +173,11 @@ def tukey_function(x, c, med):
 
 def combination_alogs(rgb_vec, algo):
     match algo:
-        case ALGO.NO_REJECTION:
+        case 1: #ALGO.NO_REJECTION:
             # aron
-            x_len = len(rgb_vec[0]) # // 8
+            x_len = len(rgb_vec[0])  // 8
             print(x_len)
-            y_len = len(rgb_vec[0][0]) # // 1
+            y_len = len(rgb_vec[0][0])  // 8
             print(y_len)
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
@@ -192,7 +192,7 @@ def combination_alogs(rgb_vec, algo):
             ret = noise_equal(ret)
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
-        case ALGO.MEDIAN:
+        case 2: #ALGO.MEDIAN:
             # Sam
             x_len = len(rgb_vec[0]) // 8
             y_len = len(rgb_vec[0][0]) // 8
@@ -206,7 +206,7 @@ def combination_alogs(rgb_vec, algo):
             ret = np.concatenate([res.get(timeout=1000) for res in results])
             return ret
 
-        case ALGO.MINMAX:
+        case 3: #ALGO.MINMAX:
             # aron
             x_len = len(rgb_vec[0])  // 8
             y_len = len(rgb_vec[0][0])  // 8
@@ -222,7 +222,7 @@ def combination_alogs(rgb_vec, algo):
 
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
-        case ALGO.SIGMA_CLIPPING:
+        case 4: #ALGO.SIGMA_CLIPPING:
             # Aron
             x_len = len(rgb_vec[0]) // 8
             y_len = len(rgb_vec[0][0]) // 8
@@ -238,7 +238,7 @@ def combination_alogs(rgb_vec, algo):
 
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
-        case ALGO.AVG_SIGMA_CLIPPING:
+        case 5: #ALGO.AVG_SIGMA_CLIPPING:
             # Aron
             x_len = len(rgb_vec[0])  # // 8
             y_len = len(rgb_vec[0][0]) # // 8
@@ -254,7 +254,7 @@ def combination_alogs(rgb_vec, algo):
 
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
-        case ALGO.NO_WEIGHTING_NO_REJECT:
+        case 6: #ALGO.NO_WEIGHTING_NO_REJECT:
             # Louis
             x_len = len(rgb_vec[0])  # // 8
             print(x_len)
@@ -272,7 +272,7 @@ def combination_alogs(rgb_vec, algo):
             ret = np.concatenate([res.get(timeout=1000) for res in results])
             ret = noise_equal(ret)
             return None
-        case ALGO.TURKEYS_BIWEIGHT:
+        case 7: #ALGO.TURKEYS_BIWEIGHT:
             # SAM
             x_len = len(rgb_vec[0]) // 2
             y_len = len(rgb_vec[0][0]) // 2
