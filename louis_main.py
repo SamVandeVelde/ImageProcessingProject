@@ -19,6 +19,13 @@ def perform_stacking():
     global base_path
     global algorithm_index
 
+    if algorithm_index == 0:
+        print('SELECT ALGO')
+        return
+    if base_path == '':
+        print('SELECT basepath')
+        return
+
     image_paths = [f for f in listdir(base_path) if isfile(join(base_path, f))]
     rgb_vec = []
     for path in image_paths:
@@ -30,10 +37,10 @@ def perform_stacking():
     rgb = rgb_vec[0]
     h = rgb_vec[0].shape[0]
     w = rgb_vec[0].shape[1]
-    print(w)
-    print(h)
+    print(f'w:{w}')
+    print(f'h:{h}')
     total_images = len(rgb_vec)
-    print(total_images)
+    print(f'total_images:{total_images}')
     # for the alignment we use the grayscale image
     # base_gray = np.dot(rgb_vec[0][..., :3], [0.299, 0.587, 0.114])
     # for i in range(1,total_images):
@@ -76,11 +83,12 @@ def directory():
 def callback(*args):
     global algorithm_index
     algorithm_index = cb.current() + 1
-    print(algorithm_index)
+    print(f'algorithm_index:{algorithm_index}')
 
 if __name__ == '__main__':
 
     gui = Tk()
+    gui.title('The image stacker 9001')
     gui.geometry('800x200')
     base_path = ''  # empty string to init
     algorithm_index = 0  # 0 to init
