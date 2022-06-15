@@ -19,6 +19,7 @@ def perform_stacking():
     global base_path
     global algorithm_index
     global label_error
+    global resolution_scaler
     if label_error:
         label_error.destroy()
 
@@ -57,10 +58,9 @@ def perform_stacking():
     #     rgb = alignImages(base_gray, gray_im)
     #     img = Image.fromarray(rgb)
     #     img.show()
-    if check_true.get() == 1:
-        rgb = combination_alogs(rgb_vec, ALGO(algorithm_index), 1)
-    else:
-        rgb = combination_alogs(rgb_vec, ALGO(algorithm_index), 8)
+    scaler = resolution_scaler.get()
+    print(f'resolution_scaler.get(): {scaler}')
+    rgb = combination_alogs(rgb_vec, ALGO(algorithm_index), scaler)
     # print(rgb)
     img = Image.fromarray(rgb)
     img.show()
@@ -96,7 +96,7 @@ def directory():
 
 
 # Function to get the index of selected option in Combobox
-def callback(*args):
+def callback_algo(*args):
     global algorithm_index
     algorithm_index = cb.current() + 1
     print(f'algorithm_index:{algorithm_index}')
@@ -110,9 +110,10 @@ if __name__ == '__main__':
     label_path = None
     label_error = None
     algorithm_index = 0  # 0 to init
-    check_true = IntVar()
+    resolution_scaler = IntVar()
     dir_button = Button(gui, text='select image directory', command=directory)
-    dir_button.pack()
+    #dir_button.pack()
+    dir_button.grid(column=0, row=3)
 
     # Define Options Tuple
     options = ('No rejection', 'Median', 'MINMAX', 'Sigma Clipping', 'Average Sigma Clipping', 'No weight, no rejection', 'Turkey\'s Biweight')
@@ -120,13 +121,31 @@ if __name__ == '__main__':
     var.set('Select stacking algorithm of choice')
     cb = ttk.Combobox(gui, textvariable=var)
     cb['values'] = options
-    cb.pack(fill='x', padx=5, pady=5)
+    #cb.pack(fill='x', padx=5, pady=5)
+    cb.grid(column=0, row=0)
 
     # Set the tracing for the given variable
-    var.trace('w', callback)
-    check_box = Checkbutton(gui, text='Check box for full image stacking (takes a long time), if not checked only top left corner will be stacked (faster)', variable=check_true, onvalue=1, offvalue=0)
-    check_box.pack()
+    var.trace('w', callback_algo)
+
+
+    options2 = ('1', '2', '4', '8', '16', '32')
+    #check_box = Checkbutton(gui, text='Check box for full image stacking (takes a long time), if not checked only top left corner will be stacked (faster)', variable=resolution_scaler, onvalue=1, offvalue=0)
+    #check_box.pack()
+    
+
+    label_res = Label(gui, text="Axial resolution devisor (default=1 i.e. no scaling, 2 --> 1/4 = 1/(2*2) as many pixels)")
+    #label_res.pack(side = LEFT)
+    label_res.grid(column=0, row=1, columnspan = 2)
+
+    resolution_scaler = ttk.Combobox(gui, values = options2)
+
+    resolution_scaler.current(0)
+    #resolution_scaler.pack(fill='x', padx=5, pady=5)
+    resolution_scaler.grid(column=0, row=2)
+
+    
     start_button = Button(gui, text='start stacking', command=perform_stacking)
-    start_button.pack()
+    #start_button.pack()
+    start_button.grid(column=1, row=3)
 
     gui.mainloop()
