@@ -52,22 +52,25 @@ def perform_stacking():
     w = rgb_vec[0].shape[1]
     print(f'w:{w}')
     print(f'h:{h}')
-    N = 100
-
+    N = 50
+    total_images = len(rgb_vec)
+    print(f'total_images:{total_images}')
+    scaler = int(resolution_scaler.get())
+    print(f'resolution_scaler.get(): {scaler}')
     rgb = np.zeros([w,h,3], dtype=np.uint8)
-    for x_c in range(N):
-        for y_c in range(N):
+    for x_c in range(N-1):
+        for y_c in range(N-1):
+            print(f'percentage: {(y_c + x_c*N)/(N*N)*100}%')
             #FUCK edges
             rgb_vec_split = []
             for i in range(len(rgb_vec)):
-                start_x = i*w//N
-                stop_x  = (i+1)*w//N
-                start_y = i*h//N
-                stop_y  = (i+1)*h//N
+                start_x = x_c*(w//N)
+                stop_x  = (x_c+1)*(w//N)
+                start_y = y_c*(h//N)
+                stop_y  = (y_c+1)*(h//N)
                 rgb_vec_split.append(rgb_vec[i][start_x:stop_x,start_y:stop_y,:])
 
-            total_images = len(rgb_vec)
-            print(f'total_images:{total_images}')
+
             # for the alignment we use the grayscale image
             # base_gray = np.dot(rgb_vec[0][..., :3], [0.299, 0.587, 0.114])
             # for i in range(1,total_images):
@@ -77,9 +80,9 @@ def perform_stacking():
             #     rgb = alignImages(base_gray, gray_im, rgb_vec[i])
             #     img = Image.fromarray(rgb)
             #     img.show()
-            scaler = int(resolution_scaler.get())
-            print(f'resolution_scaler.get(): {scaler}')
-            rgb[start_x:stop_x,start_y:stop_y,:] = combination_alogs(rgb_vec_split, ALGO(algorithm_index), scaler)
+
+            
+            rgb[start_x:stop_x,start_y:stop_y-1,:] = combination_alogs(rgb_vec_split, ALGO(algorithm_index), scaler, 1)
 
             # raw = rawpy.imread('data/New/IMG_0702.CR2')
             # rgb_im = raw.postprocess(use_camera_wb=True, no_auto_bright=True)#no_auto_scale=True)#, no_auto_bright=True)

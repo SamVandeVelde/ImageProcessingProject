@@ -34,8 +34,10 @@ def avg(rgb_vec, start_x, stop_x, y_len):
 
 
 def median(rgb_vec, start_x, stop_x, y_len):
+    #for r in rgb_vec:
+    #    print(f'shape: {r.shape}')
     rbg_stack = np.stack(rgb_vec, axis=0)
-    print(f'aaaaaaaaaa {rbg_stack.shape}, {rbg_stack[:,start_x:stop_x,1:y_len,:].shape}')
+    #print(f'aaaaaaaaaa {rbg_stack.shape}, {rbg_stack[:,start_x:stop_x,1:y_len,:].shape}')
     return np.round(np.median(rbg_stack[:,start_x:stop_x,1:y_len,:], 0))
 
 
@@ -153,7 +155,8 @@ def tukey_function(x, c, med):
         return med + (x - med) * pow(1 - pow((x - med) / c, 2), 2)
 
 
-def combination_alogs(rgb_vec, algo, divisor):
+def combination_alogs(rgb_vec, algo, divisor, N=16):
+    p = Pool(N)
     match algo:
         case ALGO.NO_REJECTION:
             # aron
@@ -163,8 +166,7 @@ def combination_alogs(rgb_vec, algo, divisor):
             print(y_len)
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
-            N = 16
-            p = Pool(N)
+
             results = []
             for i in range(N):
                 arg = (rgb_vec, x_len // N * i, x_len // N * (i + 1), y_len)
@@ -180,8 +182,6 @@ def combination_alogs(rgb_vec, algo, divisor):
             x_len = len(rgb_vec[0]) // divisor
             y_len = len(rgb_vec[0][0]) // divisor
             i_len = len(rgb_vec)
-            N = 16
-            p = Pool(N)
             results = []
             for i in range(N):
                 arg = (rgb_vec, x_len // N * i, x_len // N * (i + 1), y_len)
@@ -196,8 +196,6 @@ def combination_alogs(rgb_vec, algo, divisor):
             y_len = len(rgb_vec[0][0])  // divisor
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
-            N = 16
-            p = Pool(N)
             results = []
             for i in range(N):
                 arg = (rgb_vec, x_len // N * i, x_len // N * (i + 1), y_len)
@@ -212,8 +210,6 @@ def combination_alogs(rgb_vec, algo, divisor):
             y_len = len(rgb_vec[0][0]) // divisor
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
-            N = 16
-            p = Pool(N)
             results = []
             for i in range(N):
                 arg = (rgb_vec, x_len // N * i, x_len // N * (i + 1), y_len)
@@ -228,8 +224,6 @@ def combination_alogs(rgb_vec, algo, divisor):
             y_len = len(rgb_vec[0][0]) // divisor
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
-            N = 16
-            p = Pool(N)
             results = []
             for i in range(N):
                 arg = (rgb_vec, x_len // N * i, x_len // N * (i + 1), y_len)
@@ -246,8 +240,6 @@ def combination_alogs(rgb_vec, algo, divisor):
             print(y_len)
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
-            N = 16
-            p = Pool(N)
             results = []
             for i in range(N):
                 arg = (rgb_vec, x_len // N * i, x_len // N * (i + 1), y_len)
@@ -262,8 +254,6 @@ def combination_alogs(rgb_vec, algo, divisor):
             y_len = len(rgb_vec[0][0]) // divisor
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
-            N = 16
-            p = Pool(N)
             results = []
             for i in range(N):
                 arg = (rgb_vec, x_len // N * i, x_len // N * (i + 1), y_len)
