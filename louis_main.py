@@ -73,13 +73,17 @@ def perform_stacking():
     # img2.show()
 
 
+
 def directory():
     # get a directory path by user
     global base_path
+    global label_path
     filepath = filedialog.askdirectory(initialdir=r"C:\python\pythonProject", title="Dialog box")
     base_path = filepath
-    label_path = Label(gui, text="selected directory: " + filepath)
-    label_path.pack()
+    if label_path:
+        label_path.destroy()
+    label_path = Label(gui, text="Selected directory: " + filepath)
+    label_path.pack(side = LEFT)
 
 
 # Function to get the index of selected option in Combobox
@@ -94,6 +98,7 @@ if __name__ == '__main__':
     gui.title('The image stacker 9001')
     gui.geometry('800x200')
     base_path = ''  # empty string to init
+    label_path = None
     algorithm_index = 0  # 0 to init
     check_true = IntVar()
     dir_button = Button(gui, text='select image directory', command=directory)
