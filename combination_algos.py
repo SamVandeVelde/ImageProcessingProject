@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import IntEnum
 import multiprocessing as mp
 from multiprocessing import Pool
 import math
@@ -7,7 +7,7 @@ import numpy as np
 from noise_equalizing import *
 
 
-class ALGO(Enum):
+class ALGO(IntEnum):
     NO_REJECTION = 1,
     MEDIAN = 2,
     MINMAX = 3,
