@@ -12,6 +12,7 @@ from os import listdir
 from os.path import isfile, join
 from alignment import *
 
+### REMARK: Please only place RAW image files in the selected directory ###
 
 def perform_stacking():
 
@@ -41,15 +42,14 @@ def perform_stacking():
         print(rgb.shape)
         rgb_vec.append(rgb)
 
-    rgb = rgb_vec[0]
-    img = Image.fromarray(rgb)
-    img.show() # The base image
+
     h = rgb_vec[0].shape[0]
     w = rgb_vec[0].shape[1]
     print(f'w:{w}')
     print(f'h:{h}')
     total_images = len(rgb_vec)
     print(f'total_images:{total_images}')
+
     # for the alignment we use the grayscale image
     # base_gray = np.dot(rgb_vec[0][..., :3], [0.299, 0.587, 0.114])
     # for i in range(1,total_images):
@@ -61,6 +61,9 @@ def perform_stacking():
     #     img.show()
     scaler = int(resolution_scaler.get())
     print(f'resolution_scaler.get(): {scaler}')
+    base_image = rgb_vec[0]
+    img = Image.fromarray(base_image[0:h // scaler, 0:w // scaler])
+    img.show()  # The base image
     rgb = combination_alogs(rgb_vec, ALGO(algorithm_index), scaler)
     # print(rgb)
     img = Image.fromarray(rgb)
@@ -114,7 +117,6 @@ def perform_stacking_broken_alignment():
     for x_c in range(N-1):
         for y_c in range(N-1):
             print(f'percentage: {(y_c + x_c*N)/(N*N)*100}%')
-            #FUCK edges
             rgb_vec_split = []
             for i in range(len(rgb_vec)):
                 start_x = x_c*(w//N)

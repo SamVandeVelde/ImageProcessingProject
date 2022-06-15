@@ -78,9 +78,7 @@ def sig_clipping(rgb_vec, start_x, stop_x, y_len):
             for index in range(i_len):
                 values[index, :] = rgb_vec[index][x][y]
 
-            alpha = 0.67  # WHERE DO I COME FROM # 0.67 => keep 50% of the pixels
-            # WERE DO I GO?
-            # COTTON EYE JOE??!!
+            alpha = 3
 
             sigma, med = median_var(values)
             max_keep = med + alpha * sigma
@@ -104,9 +102,7 @@ def avg_sig_clipping(rgb_vec, start_x, stop_x, y_len):
             for index in range(i_len):
                 values[index, :] = rgb_vec[index][x][y]
 
-            alpha = 0.67  # WHERE DO I COME FROM # 0.67 => keep 50% of the pixels
-            # WERE DO I GO?
-            # COTTON EYE JOE??!!
+            alpha = 3
 
             sigma = np.var(values)
             avg = np.mean(values)
@@ -177,8 +173,8 @@ def combination_alogs(rgb_vec, algo, divisor, N=16):
             # print(f'shape post: {ret.shape}, {ret.dtype}')
             return ret
         case ALGO.MEDIAN:
-            # Sam tried
-            # Aron Succes!
+            # Sam
+            # Aron
             x_len = len(rgb_vec[0]) // divisor
             y_len = len(rgb_vec[0][0]) // divisor
             i_len = len(rgb_vec)
