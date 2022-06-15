@@ -70,6 +70,7 @@ def perform_stacking():
     img.show()
 
 
+## Used to indicate how we would implement the alignment code (doesn't work) ##
 def perform_stacking_broken_alignment():
 
     global base_path
