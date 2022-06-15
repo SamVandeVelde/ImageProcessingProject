@@ -37,6 +37,7 @@ def perform_stacking():
     image_paths = [f for f in listdir(base_path) if isfile(join(base_path, f))]
     rgb_vec = []
     for path in image_paths:
+        print(f'path: {path}')
         raw = rawpy.imread(base_path + '/' + path)
         rgb = raw.postprocess(use_camera_wb=True, no_auto_bright=True)
         print(rgb.shape)
@@ -53,7 +54,7 @@ def perform_stacking():
     print(f'h:{h}')
     N = 100
 
-    rgb = np.zeros(w,h,3)
+    rgb = np.zeros([w,h,3], dtype=np.uint8)
     for x_c in range(N):
         for y_c in range(N):
             #FUCK edges
@@ -78,7 +79,7 @@ def perform_stacking():
             #     img.show()
             scaler = int(resolution_scaler.get())
             print(f'resolution_scaler.get(): {scaler}')
-            rgb[start_x:stop_x,start_y:stop_y,:] = combination_alogs(rgb_vec, ALGO(algorithm_index), scaler)
+            rgb[start_x:stop_x,start_y:stop_y,:] = combination_alogs(rgb_vec_split, ALGO(algorithm_index), scaler)
 
             # raw = rawpy.imread('data/New/IMG_0702.CR2')
             # rgb_im = raw.postprocess(use_camera_wb=True, no_auto_bright=True)#no_auto_scale=True)#, no_auto_bright=True)
