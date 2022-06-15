@@ -256,9 +256,9 @@ def combination_alogs(rgb_vec, algo):
             return ret
         case ALGO.NO_WEIGHTING_NO_REJECT:
             # Louis
-            x_len = len(rgb_vec[0])   // 8
+            x_len = len(rgb_vec[0]) #// 8
             print(x_len)
-            y_len = len(rgb_vec[0][0])   // 8
+            y_len = len(rgb_vec[0][0]) #// 8
             print(y_len)
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
@@ -270,7 +270,7 @@ def combination_alogs(rgb_vec, algo):
                 results.append(p.apply_async(avg, arg))
 
             ret = np.concatenate([res.get(timeout=1000) for res in results])
-            ret = noise_equal(ret)
+            ret = gamma_correction(ret, 1.5)
             return ret
         case ALGO.TURKEYS_BIWEIGHT:
             # SAM
