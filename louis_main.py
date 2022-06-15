@@ -22,6 +22,9 @@ def perform_stacking():
     if algorithm_index == 0:
         print('SELECT ALGO')
         return
+    if base_path == '':
+        print('SELECT basepath')
+        return
 
     image_paths = [f for f in listdir(base_path) if isfile(join(base_path, f))]
     rgb_vec = []
