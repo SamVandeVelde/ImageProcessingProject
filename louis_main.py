@@ -18,12 +18,19 @@ def perform_stacking():
 
     global base_path
     global algorithm_index
+    global label_error
+    if label_error:
+        label_error.destroy()
 
     if algorithm_index == 0:
         print('SELECT ALGO')
+        label_error = Label(gui, text="ERROR no algorithm selected!", fg="red")
+        label_error.pack(side = LEFT)
         return
     if base_path == '':
         print('SELECT basepath')
+        label_error = Label(gui, text="ERROR no base path selected!", fg="red")
+        label_error.pack(side = LEFT)
         return
 
     image_paths = [f for f in listdir(base_path) if isfile(join(base_path, f))]
@@ -79,11 +86,13 @@ def directory():
     global base_path
     global label_path
     filepath = filedialog.askdirectory(initialdir=r"C:\python\pythonProject", title="Dialog box")
-    base_path = filepath
-    if label_path:
-        label_path.destroy()
-    label_path = Label(gui, text="Selected directory: " + filepath)
-    label_path.pack(side = LEFT)
+    print(f'filepath: {filepath}')
+    if filepath != ():
+        base_path = filepath
+        if label_path:
+            label_path.destroy()
+        label_path = Label(gui, text="Selected directory: " + filepath)
+        label_path.pack(side = LEFT)
 
 
 # Function to get the index of selected option in Combobox
@@ -99,6 +108,7 @@ if __name__ == '__main__':
     gui.geometry('800x200')
     base_path = ''  # empty string to init
     label_path = None
+    label_error = None
     algorithm_index = 0  # 0 to init
     check_true = IntVar()
     dir_button = Button(gui, text='select image directory', command=directory)
