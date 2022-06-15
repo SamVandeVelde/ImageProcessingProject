@@ -6,7 +6,7 @@ import math
 import matplotlib.pyplot as plt
 import cv2
 
-def alignImages(img1_name, img2_name):
+def alignImages(img1_name, img2_name, col_img):
     first_img = Image.open(img1_name)
     second_img = Image.open(img2_name)
     first_img_arr = np.array(first_img)
@@ -22,7 +22,7 @@ def alignImages(img1_name, img2_name):
     matches = matchFeatures(features1, features2)
     img1 = cv2.imread(img1_name,cv2.IMREAD_GRAYSCALE)
     img2 = cv2.imread(img2_name,cv2.IMREAD_GRAYSCALE)
-    new_img, J = executeMatching(matches, featurePoints1, featurePoints2, img1, img2)
+    new_img, J = executeMatching(matches, featurePoints1, featurePoints2, img1, img2, col_img)
     return new_img, J
 
 
@@ -71,7 +71,7 @@ def matchFeatures(descriptors1, descriptors2):
 
 # Execute the image alignment for  both images
 # Source of the code: https://pyimagesearch.com/2020/08/31/image-alignment-and-registration-with-opencv/
-def executeMatching(matches,pointsA, pointsB,im1, im2):
+def executeMatching(matches,pointsA, pointsB,im1, col_img):
     points1 = np.zeros((len(matches),2),dtype="float")
     points2 = np.zeros((len(matches),2),dtype="float")
 
@@ -80,6 +80,6 @@ def executeMatching(matches,pointsA, pointsB,im1, im2):
         points2[i] = pointsB[j.trainIdx].pt
 
     (J, new_mask) = cv2.findHomography(points1, points2, method = cv2.RANSAC)
-    heights, widths, channels = im2.shape
-    new_im1 = cv2.warpPerspective(im1, J, (widths, heights))
+    heights, widths, channels = col_img.shape
+    new_im1 = cv2.warpPerspective(col_img, J, (widths, heights, channels))
     return new_im1,J

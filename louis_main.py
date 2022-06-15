@@ -42,44 +42,60 @@ def perform_stacking():
         print(rgb.shape)
         rgb_vec.append(rgb)
 
+
     rgb = rgb_vec[0]
     img = Image.fromarray(rgb)
     img.show() # The base image
+    #Implement chunking
     h = rgb_vec[0].shape[0]
     w = rgb_vec[0].shape[1]
     print(f'w:{w}')
     print(f'h:{h}')
-    total_images = len(rgb_vec)
-    print(f'total_images:{total_images}')
-    # for the alignment we use the grayscale image
-    # base_gray = np.dot(rgb_vec[0][..., :3], [0.299, 0.587, 0.114])
-    # for i in range(1,total_images):
-    #     # M = match(rgb_vec[0], rgb_vec[i])
-    #     # rgb = cv2.warpPerspective(rgb_vec[i], M, (w, h))
-    #     gray_im = np.dot(rgb_vec[i][...,:3], [0.299, 0.587, 0.114])
-    #     rgb = alignImages(base_gray, gray_im)
-    #     img = Image.fromarray(rgb)
-    #     img.show()
-    scaler = int(resolution_scaler.get())
-    print(f'resolution_scaler.get(): {scaler}')
-    rgb = combination_alogs(rgb_vec, ALGO(algorithm_index), scaler)
-    # print(rgb)
+    N = 100
+
+    rgb = np.zeros(w,h,3)
+    for x_c in range(N):
+        for y_c in range(N):
+            #FUCK edges
+            rgb_vec_split = []
+            for i in range(len(rgb_vec)):
+                start_x = i*w//N
+                stop_x  = (i+1)*w//N
+                start_y = i*h//N
+                stop_y  = (i+1)*h//N
+                rgb_vec_split.append(rgb_vec[i][start_x:stop_x,start_y:stop_y,:])
+
+            total_images = len(rgb_vec)
+            print(f'total_images:{total_images}')
+            # for the alignment we use the grayscale image
+            # base_gray = np.dot(rgb_vec[0][..., :3], [0.299, 0.587, 0.114])
+            # for i in range(1,total_images):
+            #     # M = match(rgb_vec[0], rgb_vec[i])
+            #     # rgb = cv2.warpPerspective(rgb_vec[i], M, (w, h))
+            #     gray_im = np.dot(rgb_vec[i][...,:3], [0.299, 0.587, 0.114])
+            #     rgb = alignImages(base_gray, gray_im, rgb_vec[i])
+            #     img = Image.fromarray(rgb)
+            #     img.show()
+            scaler = int(resolution_scaler.get())
+            print(f'resolution_scaler.get(): {scaler}')
+            rgb[start_x:stop_x,start_y:stop_y,:] = combination_alogs(rgb_vec, ALGO(algorithm_index), scaler)
+
+            # raw = rawpy.imread('data/New/IMG_0702.CR2')
+            # rgb_im = raw.postprocess(use_camera_wb=True, no_auto_bright=True)#no_auto_scale=True)#, no_auto_bright=True)
+            # print(rgb_im)
+            # print(rgb_im.shape)
+            # img = Image.fromarray(rgb_im)
+            # img.show()
+            # equal_im = noise_equal(rgb_im)
+            #
+            # print(equal_im)
+            # print(rgb_im.shape)
+            # print(equal_im.shape)
+            # img2 = Image.fromarray(equal_im)
+            # img2.show()
     img = Image.fromarray(rgb)
     img.show()
 
-    # raw = rawpy.imread('data/New/IMG_0702.CR2')
-    # rgb_im = raw.postprocess(use_camera_wb=True, no_auto_bright=True)#no_auto_scale=True)#, no_auto_bright=True)
-    # print(rgb_im)
-    # print(rgb_im.shape)
-    # img = Image.fromarray(rgb_im)
-    # img.show()
-    # equal_im = noise_equal(rgb_im)
-    #
-    # print(equal_im)
-    # print(rgb_im.shape)
-    # print(equal_im.shape)
-    # img2 = Image.fromarray(equal_im)
-    # img2.show()
 
 
 
