@@ -50,7 +50,10 @@ def perform_stacking():
     #     rgb = alignImages(base_gray, gray_im)
     #     img = Image.fromarray(rgb)
     #     img.show()
-    rgb = combination_alogs(rgb_vec, ALGO(algorithm_index))
+    if check_true.get() == 1:
+        rgb = combination_alogs(rgb_vec, ALGO(algorithm_index), 1)
+    else:
+        rgb = combination_alogs(rgb_vec, ALGO(algorithm_index), 8)
     # print(rgb)
     img = Image.fromarray(rgb)
     img.show()
@@ -92,6 +95,7 @@ if __name__ == '__main__':
     gui.geometry('800x200')
     base_path = ''  # empty string to init
     algorithm_index = 0  # 0 to init
+    check_true = IntVar()
     dir_button = Button(gui, text='select image directory', command=directory)
     dir_button.pack()
 
@@ -105,7 +109,8 @@ if __name__ == '__main__':
 
     # Set the tracing for the given variable
     var.trace('w', callback)
-
+    check_box = Checkbutton(gui, text='Check box for full image stacking (takes a long time), if not checked only top left corner will be stacked (faster)', variable=check_true, onvalue=1, offvalue=0)
+    check_box.pack()
     start_button = Button(gui, text='start stacking', command=perform_stacking)
     start_button.pack()
 

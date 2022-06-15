@@ -163,13 +163,13 @@ def tukey_function(x, c, med):
         return med + (x - med) * pow(1 - pow((x - med) / c, 2), 2)
 
 
-def combination_alogs(rgb_vec, algo):
+def combination_alogs(rgb_vec, algo, divisor):
     match algo:
         case ALGO.NO_REJECTION:
             # aron
-            x_len = len(rgb_vec[0])  // 8
+            x_len = len(rgb_vec[0])  // divisor
             print(x_len)
-            y_len = len(rgb_vec[0][0])  // 8
+            y_len = len(rgb_vec[0][0])  // divisor
             print(y_len)
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
@@ -186,8 +186,8 @@ def combination_alogs(rgb_vec, algo):
             return ret
         case ALGO.MEDIAN:
             # Sam
-            x_len = len(rgb_vec[0]) // 8
-            y_len = len(rgb_vec[0][0]) // 8
+            x_len = len(rgb_vec[0]) // divisor
+            y_len = len(rgb_vec[0][0]) // divisor
             i_len = len(rgb_vec)
             N = 16
             p = Pool(N)
@@ -200,8 +200,8 @@ def combination_alogs(rgb_vec, algo):
 
         case ALGO.MINMAX:
             # aron
-            x_len = len(rgb_vec[0])  // 8
-            y_len = len(rgb_vec[0][0])  // 8
+            x_len = len(rgb_vec[0])  // divisor
+            y_len = len(rgb_vec[0][0])  // divisor
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
             N = 16
@@ -216,8 +216,8 @@ def combination_alogs(rgb_vec, algo):
             return ret
         case ALGO.SIGMA_CLIPPING:
             # Aron
-            x_len = len(rgb_vec[0]) // 8
-            y_len = len(rgb_vec[0][0]) // 8
+            x_len = len(rgb_vec[0]) // divisor
+            y_len = len(rgb_vec[0][0]) // divisor
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
             N = 16
@@ -232,8 +232,8 @@ def combination_alogs(rgb_vec, algo):
             return ret
         case ALGO.AVG_SIGMA_CLIPPING:
             # Aron
-            x_len = len(rgb_vec[0])  # // 8
-            y_len = len(rgb_vec[0][0]) # // 8
+            x_len = len(rgb_vec[0]) // divisor
+            y_len = len(rgb_vec[0][0]) // divisor
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
             N = 16
@@ -248,9 +248,9 @@ def combination_alogs(rgb_vec, algo):
             return ret
         case ALGO.NO_WEIGHTING_NO_REJECT:
             # Louis
-            x_len = len(rgb_vec[0]) #// 8
+            x_len = len(rgb_vec[0]) // divisor
             print(x_len)
-            y_len = len(rgb_vec[0][0]) #// 8
+            y_len = len(rgb_vec[0][0]) // divisor
             print(y_len)
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
@@ -266,8 +266,8 @@ def combination_alogs(rgb_vec, algo):
             return ret
         case ALGO.TURKEYS_BIWEIGHT:
             # SAM
-            x_len = len(rgb_vec[0]) // 2
-            y_len = len(rgb_vec[0][0]) // 2
+            x_len = len(rgb_vec[0]) // divisor
+            y_len = len(rgb_vec[0][0]) // divisor
             i_len = len(rgb_vec)
             # print(f'shape pre: {rgb_vec[0].shape}, {rgb_vec[0].dtype}')
             N = 16
