@@ -41,11 +41,13 @@ def median(rgb_vec, start_x, stop_x, y_len):
         if start_x == 0:
             print(f'x: {x}/{stop_x}')
         for y in range(y_len):
-            median_result = np.median(rgb_vec,0)
+            print(rgb_vec[:][x][y])
+            median_result = np.median(rgb_vec[:][x][y], 0)
+            print(median_result)
             print(f'x: {x}/{stop_x}')
             print(f'y: {y}')
             print(f'startx: {start_x}')
-            ret[x - start_x, y, :] = median_result
+            ret[x - start_x, y, :] = np.round(median_result)
     return ret
 
 
